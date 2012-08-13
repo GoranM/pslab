@@ -32,7 +32,8 @@ class Slab:
 
 	def __del__(self):
 		
-		SDL_FreeSurface(self.p_surface)
+		if hasattr(self, "p_surface"):
+			SDL_FreeSurface(self.p_surface)
 	
 
 	def __getitem__(self, idx):
@@ -52,7 +53,6 @@ class Slab:
 
 		for i, c in enumerate(int_bgr(color)):
 			self.pixels[idx * 3 + i] = c
-
 
 
 	def getWidth(self):
@@ -82,11 +82,16 @@ class Slab:
 
 class SlabImg(Slab):
 
-	def __init__(self, img_path):
+	def __init__(self, file_path):
 
-		ascii_path = bytes(img_path, "ascii")
+		ascii_path = bytes(file_path, "ascii")
 
 		p_surface = sdlimage.IMG_Load(ct.c_char_p(ascii_path))
+
+		if not p_surface:
+			msg = "Failed to load \"{:s}\" - Make sure the file path is correct."
+			raise Exception(msg.format(file_path))
+
 		p_surface_optimized = SDL_DisplayFormat(p_surface)
 		SDL_FreeSurface(p_surface)
 
@@ -101,6 +106,10 @@ class SlabText(Slab):
 		ascii_path = bytes(font_path, "ascii")
 
 		self.font = sdlttf.TTF_OpenFont(ct.c_char_p(ascii_path), point_size)
+		
+		if not self.font:
+			msg = "Failed to load \"{:s}\" - Make sure the file path is correct."
+			raise Exception(msg.format(file_path))
 
 		self.setText(text)
 
@@ -128,8 +137,7 @@ class SlabText(Slab):
 		
 		p_surface = sdlttf.TTF_RenderText_Shaded(self.font, self.text, self.fgc, self.bgc)
 
-		if hasattr(self, "p_surface"):
-			super().__del__()
+		super().__del__()
 
 		super().__init__(p_surface=p_surface)
 	
@@ -140,11 +148,16 @@ class Sound:
 	def __init__(self, file_path):
 		
 		self.chunk = sdlmixer.Mix_LoadWAV(c_str(file_path))
+		
+		if not self.chunk:
+			msg = "Failed to load \"{:s}\" - Make sure the file path is correct."
+			raise Exception(msg.format(file_path))
 	
 	
 	def __del__(self):
 
 		sdlmixer.Mix_FreeChunk(self.chunk)
+
 	
 	def play(self):
 		
@@ -173,6 +186,7 @@ class Mouse:
 	def getPosition(self):
 		
 		return self.position
+
 
 
 class Window(Slab):
