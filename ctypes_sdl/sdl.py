@@ -1,7 +1,7 @@
 '''Wrapper for SDL.h
 
 Generated with:
-/usr/bin/ctypesgen -lSDL /usr/include/SDL/SDL.h /usr/include/SDL/SDL_video.h /usr/include/SDL/SDL_audio.h /usr/include/SDL/SDL_keyboard.h /usr/include/SDL/SDL_mouse.h /usr/include/SDL/SDL_events.h /usr/include/SDL/SDL_keysym.h -o sdl.py
+/usr/bin/ctypesgen -lSDL /usr/include/SDL/SDL.h /usr/include/SDL/SDL_video.h /usr/include/SDL/SDL_audio.h /usr/include/SDL/SDL_keyboard.h /usr/include/SDL/SDL_mouse.h /usr/include/SDL/SDL_events.h /usr/include/SDL/SDL_keysym.h /usr/include/SDL/SDL_error.h -o sdl.py
 
 Do not modify this file.
 '''
@@ -710,6 +710,51 @@ Uint16 = c_uint16 # /usr/include/SDL/SDL_stdinc.h: 101
 Sint32 = c_int32 # /usr/include/SDL/SDL_stdinc.h: 102
 
 Uint32 = c_uint32 # /usr/include/SDL/SDL_stdinc.h: 103
+
+# /usr/include/SDL/SDL_error.h: 43
+if hasattr(_libs['SDL'], 'SDL_SetError'):
+    _func = _libs['SDL'].SDL_SetError
+    _restype = None
+    _argtypes = [String]
+    SDL_SetError = _variadic_function(_func,_restype,_argtypes)
+
+# /usr/include/SDL/SDL_error.h: 44
+if hasattr(_libs['SDL'], 'SDL_GetError'):
+    SDL_GetError = _libs['SDL'].SDL_GetError
+    SDL_GetError.argtypes = []
+    if sizeof(c_int) == sizeof(c_void_p):
+        SDL_GetError.restype = ReturnString
+    else:
+        SDL_GetError.restype = String
+        SDL_GetError.errcheck = ReturnString
+
+# /usr/include/SDL/SDL_error.h: 45
+if hasattr(_libs['SDL'], 'SDL_ClearError'):
+    SDL_ClearError = _libs['SDL'].SDL_ClearError
+    SDL_ClearError.argtypes = []
+    SDL_ClearError.restype = None
+
+enum_anon_29 = c_int # /usr/include/SDL/SDL_error.h: 62
+
+SDL_ENOMEM = 0 # /usr/include/SDL/SDL_error.h: 62
+
+SDL_EFREAD = (SDL_ENOMEM + 1) # /usr/include/SDL/SDL_error.h: 62
+
+SDL_EFWRITE = (SDL_EFREAD + 1) # /usr/include/SDL/SDL_error.h: 62
+
+SDL_EFSEEK = (SDL_EFWRITE + 1) # /usr/include/SDL/SDL_error.h: 62
+
+SDL_UNSUPPORTED = (SDL_EFSEEK + 1) # /usr/include/SDL/SDL_error.h: 62
+
+SDL_LASTERROR = (SDL_UNSUPPORTED + 1) # /usr/include/SDL/SDL_error.h: 62
+
+SDL_errorcode = enum_anon_29 # /usr/include/SDL/SDL_error.h: 62
+
+# /usr/include/SDL/SDL_error.h: 63
+if hasattr(_libs['SDL'], 'SDL_Error'):
+    SDL_Error = _libs['SDL'].SDL_Error
+    SDL_Error.argtypes = [SDL_errorcode]
+    SDL_Error.restype = None
 
 # /usr/include/SDL/SDL_rwops.h: 42
 class struct_SDL_RWops(Structure):
@@ -2694,6 +2739,18 @@ if hasattr(_libs['SDL'], 'SDL_Quit'):
     SDL_Quit = _libs['SDL'].SDL_Quit
     SDL_Quit.argtypes = []
     SDL_Quit.restype = None
+
+# /usr/include/SDL/SDL_error.h: 53
+try:
+    SDL_OutOfMemory = (SDL_Error (SDL_ENOMEM))
+except:
+    pass
+
+# /usr/include/SDL/SDL_error.h: 54
+try:
+    SDL_Unsupported = (SDL_Error (SDL_UNSUPPORTED))
+except:
+    pass
 
 # /usr/include/SDL/SDL_audio.h: 100
 try:
