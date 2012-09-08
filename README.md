@@ -117,6 +117,6 @@ This library requires SDL 1.2, and complementary libraries (SDL_image, SDL_ttf a
 
 With that done, you can cd into pslab/demos/minimem, and run `python minimem.py` to test the system.
 
-If everything works right, you can "install" this python library by moving pslab.py and ctypes_sdl into a directory like "site-packages", which is typically used for third party python modules like this one. Although, any directory in your python path should work equally well.
+If everything works right, you can "install" this python library by moving pslab.py and ctypesdl into a directory like "site-packages", which is typically used for third party python modules like this one. Although, any directory in your python path should work equally well.
 
 At this point, you should be able to `import pslab` in any Python 3.x program, anywhere on your system.

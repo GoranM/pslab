@@ -1,12 +1,5 @@
-import sys
-import os
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "ctypes_sdl"))
-
-from sdl import *
-import sdlimage
-import sdlttf
-import sdlmixer
+from ctypesdl.sdl import *
+from ctypesdl import image, ttf, mixer
 import ctypes as ct
 
 
@@ -86,7 +79,7 @@ class SlabImg(Slab):
 
 		ascii_path = bytes(file_path, "ascii")
 
-		p_surface = sdlimage.IMG_Load(ct.c_char_p(ascii_path))
+		p_surface = image.IMG_Load(ct.c_char_p(ascii_path))
 
 		if not p_surface:
 			msg = "Failed to load \"{:s}\" - Make sure the file path is correct."
@@ -105,7 +98,7 @@ class SlabText(Slab):
 		
 		ascii_path = bytes(font_path, "ascii")
 
-		self.font = sdlttf.TTF_OpenFont(ct.c_char_p(ascii_path), point_size)
+		self.font = ttf.TTF_OpenFont(ct.c_char_p(ascii_path), point_size)
 		
 		if not self.font:
 			msg = "Failed to load \"{:s}\" - Make sure the file path is correct."
@@ -128,14 +121,14 @@ class SlabText(Slab):
 		int_rgb = lambda col: ((col & 0xff0000) >> 16, (col & 0x00ff00) >> 8, col & 0x0000ff)
 
 		r, g, b = int_rgb(fgc)
-		self.fgc = sdlttf.SDL_Color(r, g, b, 0xFF)
+		self.fgc = ttf.SDL_Color(r, g, b, 0xFF)
 		r, g, b = int_rgb(bgc)
-		self.bgc = sdlttf.SDL_Color(r, g, b, 0xFF)
+		self.bgc = ttf.SDL_Color(r, g, b, 0xFF)
 
 
 	def update(self):
 		
-		p_surface = sdlttf.TTF_RenderText_Shaded(self.font, self.text, self.fgc, self.bgc)
+		p_surface = ttf.TTF_RenderText_Shaded(self.font, self.text, self.fgc, self.bgc)
 
 		super().__del__()
 
@@ -147,7 +140,7 @@ class Sound:
 
 	def __init__(self, file_path):
 		
-		self.chunk = sdlmixer.Mix_LoadWAV(c_str(file_path))
+		self.chunk = mixer.Mix_LoadWAV(c_str(file_path))
 		
 		if not self.chunk:
 			msg = "Failed to load \"{:s}\" - Make sure the file path is correct."
@@ -156,12 +149,12 @@ class Sound:
 	
 	def __del__(self):
 
-		sdlmixer.Mix_FreeChunk(self.chunk)
+		mixer.Mix_FreeChunk(self.chunk)
 
 	
 	def play(self):
 		
-		sdlmixer.Mix_PlayChannel(-1, self.chunk, 0)
+		mixer.Mix_PlayChannel(-1, self.chunk, 0)
 
 		
 
@@ -235,11 +228,11 @@ class Window(Slab):
 		
 
 SDL_Init(SDL_INIT_EVERYTHING)
-sdlttf.TTF_Init()
+ttf.TTF_Init()
 
 rate = 44100
 fmt = AUDIO_S16SYS
 channels = 2
 buffers = 4096
 
-sdlmixer.Mix_OpenAudio(rate, fmt, channels, buffers)
+mixer.Mix_OpenAudio(rate, fmt, channels, buffers)
