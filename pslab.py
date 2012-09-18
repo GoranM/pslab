@@ -177,12 +177,56 @@ class Mouse:
 
 	def btnHit(self, btn):
 		
-		return self.btn_state[btn] == 2
+		return self.btn_state[btn] == self.HIT
 
 	
 	def getPosition(self):
 		
 		return self.position
+
+
+
+
+class Keyboard:
+
+	def __init__(self):
+		
+		self.key_state = [Mouse.UP] * 324 # SDLK_LAST is 323
+
+		self.key_sym = {
+			"enter" : SDLK_RETURN,
+			"esc" : SDLK_ESCAPE,
+			"space" : SDLK_SPACE,
+			"up" : SDLK_UP,
+			"down" : SDLK_DOWN,
+			"left" : SDLK_LEFT,
+			"right" : SDLK_RIGHT,
+			"rshift" : SDLK_RSHIFT,
+			"lshift" : SDLK_LSHIFT,
+			"rctrl" : SDLK_RCTRL,
+			"lctrl" : SDLK_LCTRL,
+			"ralt" : SDLK_RALT,
+			"lalt" : SDLK_LALT
+		}
+	
+
+	def keyDown(self, key, state = Mouse.UP):
+
+		if len(key) > 1:
+			try:
+				key = self.key_sym[key]
+			except KeyError:
+				raise Exception("\"{:s}\" is not a valid key name.".format(key))
+		else:
+			key = ord(key)
+		
+		return self.key_state[key] > state
+	
+
+	def keyHit(self, key):
+		
+		return self.keyDown(key, Mouse.DOWN)
+
 
 
 
@@ -195,13 +239,15 @@ class Window(Slab):
 		
 		self.event = SDL_Event()
 
-		self.mouse = Mouse()
-
-
 		self.evtype_handle = {
 			SDL_MOUSEBUTTONDOWN : self.__mouseBtnDown,
-			SDL_MOUSEBUTTONUP: self.__mouseBtnUp
+			SDL_MOUSEBUTTONUP : self.__mouseBtnUp,
+			SDL_KEYDOWN : self.__keyDown,
+			SDL_KEYUP : self.__keyUp
 		}
+
+		self.mouse = Mouse()
+		self.keyboard = Keyboard()
 
 
 	def __mouseBtnDown(self, event, state = Mouse.HIT):
@@ -215,9 +261,22 @@ class Window(Slab):
 
 		self.mouse.position = (event.x, event.y)
 	
+
 	def __mouseBtnUp(self, event):
 		
 		self.__mouseBtnDown(event, Mouse.UP)
+	
+	
+	def __keyDown(self, event, state = Mouse.HIT):
+
+		event = event.key
+
+		self.keyboard.key_state[event.keysym.sym] = state
+	
+
+	def __keyUp(self, event):
+		
+		self.__keyDown(event, Mouse.UP)
 
 	
 	def update(self):
@@ -231,6 +290,11 @@ class Window(Slab):
 		for btn, state in self.mouse.btn_state.items():
 			if state == Mouse.HIT:
 				self.mouse.btn_state[btn] = Mouse.DOWN
+
+		for key, state in enumerate(self.keyboard.key_state):
+			if state == Mouse.HIT:
+				self.keyboard.key_state[key] = Mouse.DOWN
+
 
 		while SDL_PollEvent(ct.byref(self.event)):
 
