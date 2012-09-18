@@ -160,6 +160,10 @@ class Sound:
 
 class Mouse:
 	
+	HIT = 2
+	DOWN = 1
+	UP = 0
+	
 	def __init__(self):
 
 		self.position = (0, 0)
@@ -193,6 +197,28 @@ class Window(Slab):
 
 		self.mouse = Mouse()
 
+
+		self.evtype_handle = {
+			SDL_MOUSEBUTTONDOWN : self.__mouseBtnDown,
+			SDL_MOUSEBUTTONUP: self.__mouseBtnUp
+		}
+
+
+	def __mouseBtnDown(self, event, state = Mouse.HIT):
+		
+		event = event.button
+
+		if event.button == SDL_BUTTON_LEFT:
+			self.mouse.btn_state["lmb"] = state
+		elif event.button == SDL_BUTTON_RIGHT:
+			self.mouse.btn_state["rmb"] = state
+
+		self.mouse.position = (event.x, event.y)
+	
+	def __mouseBtnUp(self, event):
+		
+		self.__mouseBtnDown(event, Mouse.UP)
+
 	
 	def update(self):
 		
@@ -201,30 +227,19 @@ class Window(Slab):
 	
 	def processEvents(self):
 
-		HIT = 2
-		DOWN = 1
-		UP = 0
 
 		for btn, state in self.mouse.btn_state.items():
-			if state == HIT:
-				self.mouse.btn_state[btn] = DOWN
+			if state == Mouse.HIT:
+				self.mouse.btn_state[btn] = Mouse.DOWN
 
 		while SDL_PollEvent(ct.byref(self.event)):
 
-			if self.event.type == SDL_MOUSEBUTTONDOWN:
-				self.__setMouseBtnState(self.event.button, HIT)
-			elif self.event.type == SDL_MOUSEBUTTONUP:
-				self.__setMouseBtnState(self.event.button, UP)
-	
+			evtype = self.event.type
 
-	def __setMouseBtnState(self, event, state):
+			if evtype in self.evtype_handle:
+				self.evtype_handle[evtype](self.event)
 
-		if event.button == SDL_BUTTON_LEFT:
-			self.mouse.btn_state["lmb"] = state
-		elif event.button == SDL_BUTTON_RIGHT:
-			self.mouse.btn_state["rmb"] = state
 
-		self.mouse.position = (event.x, event.y)
 		
 
 SDL_Init(SDL_INIT_EVERYTHING)

@@ -5,7 +5,7 @@ import sys
 
 # Add project root to path, so pslab can be found, even if not installed:
 base_dir = os.path.dirname(__file__)
-sys.path.append(os.path.join(base_dir, "..", ".."))
+sys.path = [os.path.join(base_dir, "..", "..")] + sys.path
 
 import pslab
 
