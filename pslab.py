@@ -1,3 +1,4 @@
+import sys
 from ctypesdl.sdl import *
 from ctypesdl import image, ttf, mixer
 import ctypes as ct
@@ -243,7 +244,8 @@ class Window(Slab):
 			SDL_MOUSEBUTTONDOWN : self.__mouseBtnDown,
 			SDL_MOUSEBUTTONUP : self.__mouseBtnUp,
 			SDL_KEYDOWN : self.__keyDown,
-			SDL_KEYUP : self.__keyUp
+			SDL_KEYUP : self.__keyUp,
+			SDL_QUIT : self.__quit
 		}
 
 		self.mouse = Mouse()
@@ -277,6 +279,11 @@ class Window(Slab):
 	def __keyUp(self, event):
 		
 		self.__keyDown(event, Mouse.UP)
+	
+
+	def __quit(self, event):
+		
+		sys.exit()
 	
 
 	def setTitle(self, text):

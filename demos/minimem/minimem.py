@@ -143,6 +143,7 @@ class Player:
 if __name__ == "__main__":
 
 	window = pslab.Window(512, 512)
+	window.setTitle("Minimem")
 
 	player = Player()
 

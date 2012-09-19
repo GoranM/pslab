@@ -12,6 +12,7 @@ Usage
 import pslab
 
 window = pslab.Window(640, 480)               # You have a 640 x 480 window.
+window.setTitle("Pslab Test")		      # A title for your window (optional)
 
 window[0] = 0xFF0000                          # Set color of first pixel to red.
 window[1] = 0x00FF00                          # Second pixel to blue.
@@ -101,7 +102,42 @@ while True:
 
 		sound.play()
 
-	time.sleep(1/30)                      # Loop executes at 30 fps
+	time.sleep(1/30)                      # Don't hog CPU
+
+
+window.fill(0)
+
+
+ # Keyboard input
+
+kb = window.keyboard
+pos = [0, 0]
+spd = 5
+
+while True:
+	window.processEvents()
+
+	# Both keyDown and keyHit take either a single char, representing the respective key,
+	# or one of the following label strings:
+	#
+	# "enter", "esc", "space", "up", "down"
+	# "left", "right", "rshift", "lshift"
+	# "rctrl", "lctrl", "ralt", "lalt"
+	
+	right_left = kb.keyDown("right") - kb.keyDown("left")
+	up_down = kb.keyDown("down") - kb.keyDown("up")
+
+	if right_left or up_down:
+		pos[0] += spd * right_left
+		pos[1] += spd * up_down
+		slab.burnInto(window, *pos)
+		window.update()
+
+	if kb.keyHit('q') or kb.keyHit("esc"):
+		break
+
+	time.sleep(1/60)
+
 ```
 
 ---
