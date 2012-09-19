@@ -235,7 +235,7 @@ class Window(Slab):
 	
 	def __init__(self, width, height):
 
-		super().__init__(p_surface=SDL_SetVideoMode(width, height, 24, SDL_SWSURFACE))
+		super().__init__(p_surface=SDL_SetVideoMode(width, height, 24, SDL_SWSURFACE | SDL_DOUBLEBUF))
 		
 		self.event = SDL_Event()
 
@@ -277,6 +277,12 @@ class Window(Slab):
 	def __keyUp(self, event):
 		
 		self.__keyDown(event, Mouse.UP)
+	
+
+	def setTitle(self, text):
+		
+		c_text = c_str(text)
+		SDL_WM_SetCaption(c_text, c_text)
 
 	
 	def update(self):
