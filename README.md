@@ -12,7 +12,7 @@ Usage
 import pslab
 
 window = pslab.Window(640, 480)               # You have a 640 x 480 window.
-window.setTitle("Pslab Test")		      # A title for your window (optional)
+window.setTitle("Pslab Test")                 # A title for your window (optional)
 
 window[0] = 0xFF0000                          # Set color of first pixel to red.
 window[1] = 0x00FF00                          # Second pixel to blue.

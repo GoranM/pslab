@@ -5,6 +5,5 @@ All contributions, no matter how small, would be greatly appreciated (as long as
 
 ---
 
-* A keyboard object, to complement the existing mouse object.
 * Minimize blit operations to improve update efficiency ("dirty rect" concept, more or less, but not if it makes the API too complex).
 * A few additional "mini games" for the demos directory.
